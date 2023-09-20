@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 use clap::{Args, Parser, Subcommand};
-use crate::util::hex;
+use crate::util::{hex, unhex};
 
 pub mod util;
 
@@ -14,7 +14,7 @@ impl HexTool {
     fn process(&self, input: &str, numeric: bool, split: bool) -> String {
         match self {
             HexTool::Hex => hex::convert(input, numeric, split),
-            HexTool::UnHex => input.as_bytes().iter().map(|b| format!("{:02x}", b)).collect(),
+            HexTool::UnHex => unhex::convert(input, numeric, split)
         }
     }
 }
