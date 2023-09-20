@@ -72,5 +72,5 @@ fn main() {
         Commands::Hex(h) => HexTool::Hex.process(&h.input, h.numeric, h.split),
         Commands::Unhex(u) => HexTool::Hex.process(&u.input, u.numeric, u.split),
     };
-    println!("{}", result);
+    print!("{}", result);
 }
