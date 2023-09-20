@@ -2,6 +2,13 @@
 name = "hextool"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+license-file = "LICENSE"
+description = "A simple command line tool to convert hex to string and string to hex"
+homepage = "https://github.com/CyR1en/hextool"
+repository = "https://github.com/CyR1en/hextool"
+readme = "README.md"
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
