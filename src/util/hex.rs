@@ -38,6 +38,6 @@ fn hex_numeric(input: &str) -> Result<String, HexToolError> {
             message: String::from("Input is not valid for 'hex' with numeric flag (-n).")
         });
     }
-    let to_str: i32 = input.parse().unwrap();
+    let to_str: i64 = input.parse().unwrap();
     Ok(format!("{:02x}", to_str))
 }
