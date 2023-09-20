@@ -69,8 +69,8 @@ struct Unhex {
 fn main() {
     let args = CLI::parse();
     let result = match &args.command {
-        Commands::Hex(h) => HexTool::Hex.process(&h.input, h.numeric, h.split),
-        Commands::Unhex(u) => HexTool::Hex.process(&u.input, u.numeric, u.split),
+        Commands::Hex(h) => HexTool::Hex.process(&h.input.trim(), h.numeric, h.split),
+        Commands::Unhex(u) => HexTool::UnHex.process(&u.input.trim(), u.numeric, u.split),
     };
     print!("{}", result);
 }
