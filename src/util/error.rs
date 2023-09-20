@@ -7,13 +7,13 @@ pub struct HexToolError {
 
 impl Debug for HexToolError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        todo!()
+        write!(f, "{}", self.message)
     }
 }
 
 impl Display for HexToolError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        todo!()
+        write!(f, "{}", self.message)
     }
 }
 
