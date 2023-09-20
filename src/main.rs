@@ -1,7 +1,7 @@
 #![allow(unused)]
 
-use clap::{Args, Parser, Subcommand};
 use crate::util::{hex, unhex};
+use clap::{Args, Parser, Subcommand};
 
 pub mod util;
 
@@ -14,11 +14,10 @@ impl HexTool {
     fn process(&self, input: &str, numeric: bool, split: bool) -> String {
         match self {
             HexTool::Hex => hex::convert(input, numeric, split),
-            HexTool::UnHex => unhex::convert(input, numeric, split)
+            HexTool::UnHex => unhex::convert(input, numeric, split),
         }
     }
 }
-
 
 #[derive(Parser)]
 #[command(author, version, about)]
@@ -64,7 +63,6 @@ struct Unhex {
     /// Input to convert
     input: String,
 }
-
 
 fn main() {
     let args = CLI::parse();
