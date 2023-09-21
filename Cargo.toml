@@ -7,6 +7,7 @@ description = "A simple command line tool to convert hex to string and string to
 homepage = "https://github.com/CyR1en/hextool"
 repository = "https://github.com/CyR1en/hextool"
 readme = "README.md"
+keywords = ["hex", "string", "convert", "tool", "cli"]
 categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
