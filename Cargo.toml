@@ -2,7 +2,7 @@
 name = "hextool"
 version = "0.1.2"
 edition = "2021"
-license-file = "LICENSE"
+license = "MIT"
 description = "A simple command line tool to convert hex to string and string to hex"
 homepage = "https://github.com/CyR1en/hextool"
 repository = "https://github.com/CyR1en/hextool"
