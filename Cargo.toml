@@ -15,4 +15,3 @@ categories = ["command-line-utilities"]
 [dependencies]
 clap = { version = "4.4.4", features = ["derive"] }
 regex = "1.9.5"
-colored = "2.0.4"
