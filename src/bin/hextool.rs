@@ -1,43 +1,55 @@
-#![allow(unused)]
-
-use crate::cli::{Commands, HexTool};
+use std::io;
+use std::io::Write;
+use hextool::{Convert, Hex, UnHex};
+use crate::cli::{Commands};
 
 
 fn main() {
     let args = cli::parse();
     let result = match &args.command {
         Commands::Hex { numeric, split, input } => {
-            HexTool::Hex.process(input, *numeric, *split)
+            Hex::convert(input, *numeric, *split)
         }
         Commands::Unhex { numeric, split, input } => {
-            HexTool::UnHex.process(input, *numeric, *split)
+            UnHex::convert(input, *numeric, *split)
         }
     };
-    print!("{}", result);
+    io::stdout().write_all(result.as_bytes()).unwrap();
+    io::stdout().flush().unwrap();
 }
 
-
 mod cli {
-    use clap::{Args, Parser, Subcommand};
-    use hextool::{Hex, UnHex, Convert};
+    use std::{env, io};
+    use std::ffi::OsString;
+    use clap::{Parser, Subcommand};
 
     pub(crate) fn parse() -> CLI {
-        CLI::parse()
-    }
-
-    pub(crate) enum HexTool {
-        Hex,
-        UnHex,
-    }
-
-    impl HexTool {
-        pub(crate) fn process(&self, input: &str, numeric: bool, split: bool) -> String {
-            match self {
-                // HexTool::Hex(h) => h.convert(input, numeric, split),
-                // HexTool::UnHex(u) => u.convert(input, numeric, split),
-                HexTool::Hex => { Hex::convert(input, numeric, split) }
-                HexTool::UnHex => { UnHex::convert(input, numeric, split) }
+        match CLI::try_parse() {
+            Ok(c) => { c }
+            Err(_) => {
+                // check if stdin is empty
+                if atty::is(atty::Stream::Stdin) {
+                    return CLI::parse();
+                }
+                parse_stdin()
             }
+        }
+    }
+
+    fn parse_stdin() -> CLI {
+        let mut input = String::from("");
+
+        io::stdin().lines().for_each(|line| {
+            input.push_str(&line.unwrap());
+            input.push_str("\n");
+        });
+
+        let input = input.trim();
+        let mut args: Vec<OsString> = env::args_os().collect();
+        args.push(input.into());
+        match CLI::try_parse_from(args) {
+            Ok(c) => { c }
+            Err(e) => { e.exit() }
         }
     }
 

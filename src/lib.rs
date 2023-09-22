@@ -215,7 +215,7 @@ impl UnHex {
         }
         if !is_valid {
             return Err(HexToolError {
-                message: format!("The highlighted chars can't be converted:\n{}.", proc_input)
+                message: format!("The highlighted chars can't be converted:\n{}", proc_input)
             });
         }
 
