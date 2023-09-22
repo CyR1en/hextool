@@ -43,7 +43,7 @@ hextool = { version = "version", default-features = false }
 
 With `hextool` you can use `Hex` and `UnHex` to convert strings from and to hex strings.
 
-###### Convert trait
+##### Convert trait
 
 Both `Hex` and `UnHex` implements this trait. This trait has a function called `convert` and it has the following parameters. It's important to know these parameters because it changes how the output.
 
@@ -60,7 +60,7 @@ fn convert(input: &str, numeric: bool, split: bool) -> String
   - For `UnHex` this will separate the converted hex to a single ascii.
     - `6161` -> `a a`
 
-###### Converting string to hex
+##### Converting string to hex
 
 ```rust
 use hextool::{Hex, Convert};
@@ -82,7 +82,7 @@ println!("255 in hex: {}", hex);
 // #=> "255 in hex: {ff}"
 ```
 
-###### Converting hex to string
+##### Converting hex to string
 
 ```rust
 use hextool::{UnHex, Convert};
