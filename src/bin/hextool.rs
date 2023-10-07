@@ -1,55 +1,58 @@
+use crate::cli::Commands;
+use hextool::{Convert, Hex, UnHex};
 use std::io;
 use std::io::Write;
-use hextool::{Convert, Hex, UnHex};
-use crate::cli::{Commands};
-
 
 fn main() {
     let args = cli::parse();
     let result = match &args.command {
-        Commands::Hex { numeric, split, input } => {
-            Hex::convert(input, *numeric, *split)
-        }
-        Commands::Unhex { numeric, split, input } => {
-            UnHex::convert(input, *numeric, *split)
-        }
+        Commands::Hex {
+            numeric,
+            split,
+            input,
+        } => Hex::convert(input, *numeric, *split),
+        Commands::Unhex {
+            numeric,
+            split,
+            input,
+        } => UnHex::convert(input, *numeric, *split),
     };
     io::stdout().write_all(result.as_bytes()).unwrap();
     io::stdout().flush().unwrap();
 }
 
 mod cli {
-    use std::{env, io};
-    use std::ffi::OsString;
     use clap::{Parser, Subcommand};
+    use std::ffi::OsString;
+    use std::{env, io};
 
-    pub(crate) fn parse() -> CLI {
-        match CLI::try_parse() {
-            Ok(c) => { c }
+    pub(crate) fn parse() -> Cli {
+        match Cli::try_parse() {
+            Ok(c) => c,
             Err(_) => {
                 // check if stdin is empty
                 if atty::is(atty::Stream::Stdin) {
-                    return CLI::parse();
+                    return Cli::parse();
                 }
                 parse_stdin()
             }
         }
     }
 
-    fn parse_stdin() -> CLI {
+    fn parse_stdin() -> Cli {
         let mut input = String::from("");
 
         io::stdin().lines().for_each(|line| {
             input.push_str(&line.unwrap());
-            input.push_str("\n");
+            input.push('\n');
         });
 
         let input = input.trim();
         let mut args: Vec<OsString> = env::args_os().collect();
         args.push(input.into());
-        match CLI::try_parse_from(args) {
-            Ok(c) => { c }
-            Err(e) => { e.exit() }
+        match Cli::try_parse_from(args) {
+            Ok(c) => c,
+            Err(e) => e.exit(),
         }
     }
 
@@ -57,7 +60,7 @@ mod cli {
     #[command(author, version, about)]
     #[command(propagate_version = true)]
     /// Commandline tool to convert hex to string and string to hex
-    pub(crate) struct CLI {
+    pub(crate) struct Cli {
         #[command(subcommand)]
         pub(crate) command: Commands,
     }

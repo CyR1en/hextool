@@ -54,9 +54,9 @@
 #![doc(html_root_url = "https://docs.rs/hextool/0.1.1")]
 #![deny(missing_docs)]
 
+use regex::Regex;
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
-use regex::Regex;
 
 /// Error type for hextool
 pub struct HexToolError {
@@ -80,7 +80,6 @@ impl Display for HexToolError {
 
 /// Implement Debug, Display and Error for HexToolError
 impl Error for HexToolError {}
-
 
 /// Convert trait
 pub trait Convert {
@@ -111,14 +110,18 @@ pub struct Hex;
 
 impl Hex {
     fn hex_string(input: &str) -> Result<String, HexToolError> {
-        return Ok(input.as_bytes().iter().map(|b| format!("{:02x}", b)).collect());
+        return Ok(input
+            .as_bytes()
+            .iter()
+            .map(|b| format!("{:02x}", b))
+            .collect());
     }
 
     fn hex_numeric(input: &str) -> Result<String, HexToolError> {
-        let is_all_digit = input.chars().all(|c| c.is_digit(10));
+        let is_all_digit = input.chars().all(|c| c.is_ascii_digit());
         if !is_all_digit {
             return Err(HexToolError {
-                message: String::from("Input is not valid for 'hex' with numeric flag (-n).")
+                message: String::from("Input is not valid for 'hex' with numeric flag (-n)."),
             });
         }
         let to_str: i64 = input.parse().unwrap();
@@ -128,12 +131,11 @@ impl Hex {
 
 impl Convert for Hex {
     fn convert(input: &str, numeric: bool, split_byte: bool) -> String {
-        let result;
-        if numeric {
-            result = Hex::hex_numeric(input);
+        let result = if numeric {
+            Hex::hex_numeric(input)
         } else {
-            result = Hex::hex_string(input);
-        }
+            Hex::hex_string(input)
+        };
 
         match result {
             Ok(str) => {
@@ -141,13 +143,13 @@ impl Convert for Hex {
                     let mut result = String::new();
                     for (i, c) in str.chars().enumerate() {
                         if i % 2 == 0 && i != 0 {
-                            result.push_str(" ");
+                            result.push(' ');
                         }
                         result.push(c);
                     }
-                    format!("{}", result)
+                    result
                 } else {
-                    format!("{}", str)
+                    str
                 }
             }
             Err(e) => e.to_string(),
@@ -175,8 +177,11 @@ impl UnHex {
         match parsed {
             Ok(i) => Ok(format!("{}", i)),
             Err(e) => Err(HexToolError {
-                message: format!("Input is not valid for 'unhex' with numeric flag (-n). {}", e)
-            })
+                message: format!(
+                    "Input is not valid for 'unhex' with numeric flag (-n). {}",
+                    e
+                ),
+            }),
         }
     }
 
@@ -190,9 +195,11 @@ impl UnHex {
             let parsed = u8::from_str_radix(byte, 16);
             match parsed {
                 Ok(i) => result.push(i as char),
-                Err(e) => return Err(HexToolError {
-                    message: format!("Could not parse {}", e)
-                })
+                Err(e) => {
+                    return Err(HexToolError {
+                        message: format!("Could not parse {}", e),
+                    })
+                }
             }
             i += 2;
         }
@@ -206,8 +213,10 @@ impl UnHex {
         let mut is_valid = true;
         let mut proc_input = String::new();
         for c in cleaned.chars() {
-            if !c.is_digit(16) {
-                if is_valid { is_valid = false };
+            if !c.is_ascii_hexdigit() {
+                if is_valid {
+                    is_valid = false
+                };
                 proc_input.push_str(&format!("\x1b[31m{}\x1b[0m", c));
                 continue;
             }
@@ -215,7 +224,7 @@ impl UnHex {
         }
         if !is_valid {
             return Err(HexToolError {
-                message: format!("The highlighted chars can't be converted:\n{}", proc_input)
+                message: format!("The highlighted chars can't be converted:\n{}", proc_input),
             });
         }
 
@@ -228,26 +237,29 @@ impl UnHex {
 
 impl Convert for UnHex {
     fn convert(input: &str, numeric: bool, split_byte: bool) -> String {
-        let valid_input;
-        match UnHex::validate_hex(input) {
-            Ok(str) => { valid_input = str; }
-            Err(e) => return e.to_string()
-        }
+        let valid_input = match UnHex::validate_hex(input) {
+            Ok(str) => str,
+            Err(e) => return e.to_string(),
+        };
 
-        let result;
-        if numeric {
-            result = UnHex::un_hex_numeric(&valid_input);
+        let result = if numeric {
+            UnHex::un_hex_numeric(&valid_input)
         } else {
-            result = UnHex::un_hex_string(&valid_input);
-        }
+            UnHex::un_hex_string(&valid_input)
+        };
 
         match result {
             Ok(str) => {
-                if !split_byte { return format!("{}", str); }
-                return str.chars().map(|c| format!("{}", c))
-                    .collect::<Vec<String>>().join(" ");
+                if !split_byte {
+                    return str.to_string();
+                }
+                return str
+                    .chars()
+                    .map(|c| format!("{}", c))
+                    .collect::<Vec<String>>()
+                    .join(" ");
             }
-            Err(e) => { e.to_string() }
+            Err(e) => e.to_string(),
         }
     }
 }

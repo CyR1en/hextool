@@ -1,4 +1,3 @@
-use hextool;
 use hextool::{Convert, Hex, UnHex};
 
 #[test]
@@ -29,7 +28,10 @@ fn test_unhex() {
 
     // Convert string over letter `f`. This should return an error.
     let unhex = UnHex::convert("abcdefgabc", false, false);
-    assert_eq!(unhex, "The highlighted chars can't be converted:\nabcdef\u{1b}[31mg\u{1b}[0mabc.");
+    assert_eq!(
+        unhex,
+        "The highlighted chars can't be converted:\nabcdef\u{1b}[31mg\u{1b}[0mabc."
+    );
 
     // Convert valid string with numeric flag.
     let unhex = UnHex::convert("ff", true, false);
@@ -51,4 +53,3 @@ fn test_unhex() {
     let unhex = UnHex::convert("cafebabe", true, false);
     assert_eq!(unhex, "3405691582");
 }
-
